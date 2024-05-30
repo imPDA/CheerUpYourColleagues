@@ -1,7 +1,12 @@
 ## Cheer Up Your Colleagues
+Simple application to send encouraging messages to a work chat!
 
-### Simple application to send encouraging messages to a work chat!
+### Features:
+- <img src="https://static-00.iconduck.com/assets.00/docker-color-icon-96x71-khfqsld7.png" width="17" height="12"/> containerised 
+- 📅 build-in flexible scheduler
+- 🔋multiple sources of images
+- 🚅 multiple destinations available (MS Teams, ...)
+- 🧅layered customizable structure
 
-![picture](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7Elmz1AYPfS4I0AfOFq_Je72GBMsDHSj4aw&s)
-
-### See dev branch 👀
+### How to use:
+There is Makefile to start a docker container.
