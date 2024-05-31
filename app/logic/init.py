@@ -16,8 +16,8 @@ def init_container() -> Container:
     container = Container()
 
     # configs
-    container.register(Config, instance=Config())
-    config: Config = container.resolve(Config)
+    config = Config()
+    container.register(Config, instance=config)
 
     # repos
     container.register(BasePictureRepository, instance=LoremPicsumPictureRepository())
@@ -25,7 +25,7 @@ def init_container() -> Container:
 
     # senders
     container.register(BaseMessageSender, instance=TeamsWebhookMessageSender(
-        config.teams_webhook_url
+        config.ms_teams_webhook
     ))
 
     return container

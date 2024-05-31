@@ -19,4 +19,4 @@ async def send_random_image_and_text():
     quote = quotes_repository.get_random()
 
     sender = container.resolve(BaseMessageSender)
-    sender.send(text=str(quote), image=picture.public_link)
+    sender.send(quote=quote.text, author=quote.author, image=picture.public_link)

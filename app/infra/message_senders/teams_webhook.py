@@ -17,17 +17,36 @@ def generate_card(**kwargs) -> str:
                 "type": "Image",
                 "url": kwargs.get('image'),
                 "wrap": "true",
+                "horizontalAlignment": "Center",
             }
         )
 
-    if kwargs.get('text'):
+    if kwargs.get('quote'):
         body.append(
             {
                 "type": "TextBlock",
-                "text": kwargs.get('text'),
-                "horizontalAlignment": "center",
+                "text": kwargs.get('quote'),
+                "horizontalAlignment": "right",
+                "size": "Medium",
             }
         )
+
+    if kwargs.get('author'):
+        body.append(
+            {
+                "type": "TextBlock",
+                "text": kwargs.get('author'),
+                "horizontalAlignment": "right",
+                "size": "Medium",
+            }
+        )
+
+    body.append({
+        "type": "TextBlock",
+        "text": "_Dmitry Patryshev_",
+        "horizontalAlignment": "right",
+        "size": "Small",
+    })
 
     message = {
         "type": "message",
@@ -45,8 +64,6 @@ def generate_card(**kwargs) -> str:
         ]
     }
 
-    logging.getLogger('app').debug(f"Created message: {message}")
-
     return json.dumps(message)
 
 
@@ -56,7 +73,12 @@ class TeamsWebhookMessageSender(BaseMessageSender):
 
     def send(self, **kwargs) -> None:
         headers = {'Content-Type': 'application/json'}
-        response = requests.post(
-            self.webhook, headers=headers, json=generate_card(**kwargs)
-        )
+        payload = generate_card(**kwargs)
+
+        logging.getLogger('app').debug(f"Sending message: {payload}")
+
+        response = requests.post(self.webhook, headers=headers, data=payload)
+
+        logging.getLogger('app').debug("Get response: %s", response.content)
+
         response.raise_for_status()

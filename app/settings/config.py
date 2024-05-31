@@ -1,5 +1,6 @@
-from pydantic import BaseConfig, Field, AliasChoices
+from pydantic import Field
+from pydantic_settings import BaseSettings
 
 
-class Config(BaseConfig):
-    ms_teams_webhook = Field(alias='webhook')
+class Config(BaseSettings):
+    ms_teams_webhook: str = Field(alias='webhook')
