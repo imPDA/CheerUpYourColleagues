@@ -9,24 +9,8 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from apscheduler.triggers.interval import IntervalTrigger
 
-from infra.message_senders.teams_webhook import TeamsWebhookMessageSender
-from infra.repositories.picture.lorem_picsum import LoremPicsumPictureRepository
-from infra.repositories.quote.quotable_io import QuotableIOQuoteRepository
 from logger.base import create_logger
-
-
-async def send_random_image_and_text():
-    logger = logging.getLogger('app')
-    logger.debug('Task fired')
-
-    picture_repository = LoremPicsumPictureRepository()
-    quotes_repository = QuotableIOQuoteRepository()
-
-    picture = picture_repository.get('/320')
-    quote = quotes_repository.get_random()
-
-    sender = TeamsWebhookMessageSender("https://<webhook here>")
-    sender.send(text=str(quote), image=picture.public_link)
+from logic.send_random_message import send_random_image_and_text
 
 
 def error_listener(event: JobExecutionEvent) -> None:
