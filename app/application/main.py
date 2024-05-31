@@ -34,7 +34,8 @@ if __name__ == '__main__':
         scheduler.shutdown(wait=False)
         logger.info('Sheduler shutted down!')
 
-    loop.add_signal_handler(signal.SIGTERM, graceful_stop)
+    loop.add_signal_handler(signal.SIGINT, graceful_stop)
+    # TODO: would be fine to add uvicorn style of handling signals
 
     scheduler.start()
 
