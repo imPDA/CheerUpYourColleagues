@@ -1,13 +1,12 @@
 from functools import lru_cache
 
-from punq import Container
-
 from infra.message_senders.base import BaseMessageSender
 from infra.message_senders.teams_webhook import TeamsWebhookMessageSender
 from infra.repositories.picture.base import BasePictureRepository
 from infra.repositories.picture.lorem_picsum import LoremPicsumPictureRepository
 from infra.repositories.quote.base import BaseQuoteRepository
 from infra.repositories.quote.quotable_io import QuotableIOQuoteRepository
+from punq import Container
 from settings.config import Config
 
 
@@ -24,8 +23,8 @@ def init_container() -> Container:
     container.register(BaseQuoteRepository, instance=QuotableIOQuoteRepository())
 
     # senders
-    container.register(BaseMessageSender, instance=TeamsWebhookMessageSender(
-        config.ms_teams_webhook
-    ))
+    container.register(
+        BaseMessageSender, instance=TeamsWebhookMessageSender(config.ms_teams_webhook)
+    )
 
     return container

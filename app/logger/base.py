@@ -1,14 +1,14 @@
 import logging
 
-FORMAT = "%(asctime)s | %(levelname)8s | %(name)27s | %(message)s"
+FORMAT = '%(asctime)s | %(levelname)8s | %(name)27s | %(message)s'
 
-GREY = "\x1b[0;37m"
-LIGHT_GREY = "\x1b[0;36m"
-BLUE = "\x1b[0;34m"
-YELLOW = "\x1b[0;32m"
-RED = "\x1b[0;31m"
-BOLD_RED = "\x1b[1;31m"
-RESET = "\x1b[0m"
+GREY = '\x1b[0;37m'
+LIGHT_GREY = '\x1b[0;36m'
+BLUE = '\x1b[0;34m'
+YELLOW = '\x1b[0;32m'
+RED = '\x1b[0;31m'
+BOLD_RED = '\x1b[1;31m'
+RESET = '\x1b[0m'
 
 FORMATS = {
     logging.DEBUG: GREY + FORMAT + RESET,

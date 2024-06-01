@@ -8,7 +8,7 @@ class Quote:
     author: str
 
     def __str__(self):
-        return f"\"{self.text}\" - {self.author}"
+        return f'"{self.text}" - {self.author}'
 
 
 @dataclass

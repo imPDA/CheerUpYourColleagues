@@ -1,4 +1,3 @@
-import logging
 from dataclasses import dataclass
 from typing import ClassVar
 
@@ -21,7 +20,7 @@ class QuotableIOQuoteRepository(BaseQuoteRepository):
     random_quotes_endpoint: ClassVar[str] = quotes_endpoint + '/random'
 
     def get(self, identifier) -> Quote:
-        response = requests.get(f"{self.quotes_endpoint}/{identifier}")
+        response = requests.get(f'{self.quotes_endpoint}/{identifier}')
         response.raise_for_status()
 
         return dict_to_quote_converter(response.json()[0])

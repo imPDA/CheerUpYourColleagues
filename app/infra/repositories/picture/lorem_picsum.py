@@ -1,6 +1,5 @@
-from io import BytesIO
 from dataclasses import dataclass
-
+from io import BytesIO
 from typing import ClassVar
 
 import requests
