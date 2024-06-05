@@ -1,0 +1,17 @@
+name: cheer-up-your-colleagues
+
+services:
+  app:
+    container_name: app
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    command: "python3 ./application/main.py"
+    env_file:
+      ../.env
+    volumes:
+      - ../app:/app
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m
