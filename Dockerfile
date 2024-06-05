@@ -1,18 +1,9 @@
-FROM python:3.11-slim
+FROM apache/airflow:2.8.1
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+COPY requirements.txt .
 
-RUN apt-get update && \
-    apt install -y python3 && \
-    pip install --upgrade pip && \
-    pip install poetry
+RUN pip install --upgrade pip &&\
+    pip install apache-airflow[amazon,postgres]==${AIRFLOW_VERSION} &&\
+    pip install -r requirements.txt
 
-COPY pyproject.toml .
-RUN poetry config virtualenvs.create false && \
-    poetry install --no-root --no-interaction --no-ansi
-
-COPY ./app /app
-
-WORKDIR /app
-ENV PYTHONPATH "${PYTHONPATH}:/app"
+ENV PYTHONPATH "${PYTHONPATH}:/opt"
