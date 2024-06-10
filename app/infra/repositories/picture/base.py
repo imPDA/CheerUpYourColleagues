@@ -1,20 +1,34 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from io import BytesIO
+from uuid import uuid4
 
 
 @dataclass
-class Picture:
+class PictureObject:
     obj: BytesIO
-    public_link: str = ''
+    ext: str
+    uid: str = field(default_factory=lambda: str(uuid4()))
+
+    @property
+    def name(self) -> str:
+        return f'{self.uid}.{self.ext}'
+
+    @property
+    def size(self) -> int:
+        return self.obj.getbuffer().nbytes
 
 
 @dataclass
 class BasePictureRepository(ABC):
     @abstractmethod
-    def get(self, identifier) -> Picture:
+    def create(self, filename: PictureObject) -> None:
         raise NotImplementedError()
 
     @abstractmethod
-    def get_random(self) -> Picture:
+    def read(self, filename: str) -> PictureObject:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def delete(self, filename: str) -> None:
         raise NotImplementedError()

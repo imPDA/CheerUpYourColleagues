@@ -12,7 +12,7 @@ class Quote:
 
 
 @dataclass
-class BaseQuoteRepository(ABC):
+class BaseQuoteSource(ABC):
     @abstractmethod
     def get(self, identifier) -> Quote:
         raise NotImplementedError()

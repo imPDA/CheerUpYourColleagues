@@ -4,11 +4,11 @@ from typing import ClassVar
 
 import requests
 
-from .base import BasePictureRepository, Picture
+from .base import BasePictureSource, Picture
 
 
 @dataclass
-class LoremPicsumPictureRepository(BasePictureRepository):
+class LoremPicsumPictureSource(BasePictureSource):
     url: ClassVar[str] = 'https://picsum.photos/'
     default_size: str = '320'
 

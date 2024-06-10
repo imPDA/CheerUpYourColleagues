@@ -1,5 +1,6 @@
 DC = docker compose
 APP_FILE = -f ./docker-compose/app.yaml
+MINIO_FILE = -f ./docker-compose/minio.yaml
 ENV_FILE = --env-file ./.env
 
 build:
@@ -18,3 +19,12 @@ restart:
 	make up
 exec:
 	docker exec -it app sh
+
+minio-up:
+	${DC} ${MINIO_FILE} up -d
+
+minio-logs:
+	${DC} ${MINIO_FILE} logs --follow
+
+minio-down:
+	${DC} ${MINIO_FILE} down

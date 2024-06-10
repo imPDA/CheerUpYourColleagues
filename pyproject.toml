@@ -11,6 +11,8 @@ package-mode = false
 python = "^3.11"
 punq = "^0.7.0"
 pydantic-settings = "^2.2.1"
+minio = "^7.2.7"
+sqlalchemy = "^2.0.30"
 
 
 [tool.poetry.group.dev]
