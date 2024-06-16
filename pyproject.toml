@@ -48,4 +48,5 @@ ignore = []
 quote-style = "single"
 
 [tool.ruff.lint.isort]
-known-third-party = [""]
+known-third-party = ["airflow"]
+known-first-party = ["application", "infra", "logger", "logic", "settings"]

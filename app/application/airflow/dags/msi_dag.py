@@ -1,6 +1,7 @@
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
+
 from logic.send_random_message import (
     get_random_image_url,
     get_random_quote,
