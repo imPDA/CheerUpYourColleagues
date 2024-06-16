@@ -8,15 +8,13 @@ from logic.send_random_message import (
 )
 
 with DAG(
-    dag_id='send_quote_second_approach',
+    dag_id='msi_projects',
     schedule=None,
-    tags=['cheer_up_your_colleagues'],
-    description='lorem ipsum dolor sit amet, consectetur adipiscing',
+    tags=['cheer_up_your_colleagues', 'MSI'],
+    description='Main DAG of Mental State Improvement project',
     catchup=False,
-) as second_approach:
-    start = EmptyOperator(
-        task_id='start',
-    )
+) as msi_project_dag:
+    start = EmptyOperator(task_id='start')
 
     get_image_url = PythonOperator(
         task_id='get_random_image_url',
@@ -34,8 +32,6 @@ with DAG(
         op_args=[get_quote.output, get_image_url.output],
     )
 
-    end = EmptyOperator(
-        task_id='end',
-    )
+    end = EmptyOperator(task_id='end')
 
     start >> [get_image_url, get_quote] >> send_message >> end
