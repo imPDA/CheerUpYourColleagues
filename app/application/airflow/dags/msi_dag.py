@@ -8,7 +8,7 @@ from logic.send_random_message import (
 )
 
 with DAG(
-    dag_id='msi_projects',
+    dag_id='msi_project_dag',
     schedule=None,
     tags=['cheer_up_your_colleagues', 'MSI'],
     description='Main DAG of Mental State Improvement project',
