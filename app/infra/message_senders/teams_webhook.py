@@ -43,7 +43,7 @@ def generate_card(**kwargs) -> str:
     body.append(
         {
             'type': 'TextBlock',
-            'text': '_Dmitry Patryshev_',
+            'text': '_sent by Dmitry Patryshev_',
             'horizontalAlignment': 'right',
             'size': 'Small',
         }
