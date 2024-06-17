@@ -11,6 +11,7 @@ package-mode = false
 python = "^3.11"
 punq = "^0.7.0"
 pydantic-settings = "^2.2.1"
+pillow = "^10.3.0"
 
 
 [tool.poetry.group.dev]
@@ -20,7 +21,6 @@ optional = true
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-pillow = "^10.3.0"
 
 
 [tool.poetry.group.lint.dependencies]
