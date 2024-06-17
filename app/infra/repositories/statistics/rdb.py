@@ -32,6 +32,15 @@ class RDBStatisticsRepository(BaseStatisticsRepository):
 
         return postgres_record_to_quote_object_converter(quote_record)
 
+    def find(self, *filters) -> list[QuoteObject]:
+        with Session(self.engine) as session:
+            return list(
+                map(
+                    postgres_record_to_quote_object_converter,
+                    session.query(QuoteRecord).filter(*filters).all(),
+                )
+            )
+
     def delete(self, index: str) -> None:
         with Session(self.engine) as session:
             session.query(QuoteRecord).filter(QuoteRecord.index == index).delete()

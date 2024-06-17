@@ -24,5 +24,9 @@ class BaseStatisticsRepository(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    def find(self, *filters) -> list[QuoteObject]:
+        raise NotImplementedError()
+
+    @abstractmethod
     def delete(self, index: str) -> None:
         raise NotImplementedError()
