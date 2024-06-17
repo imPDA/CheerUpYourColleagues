@@ -1,19 +1,20 @@
 DC = docker compose
 APP_FILE = -f ./docker-compose/app.yaml
+AIFLOW_FILE = -f ./docker-compose/airflow.yaml
 MINIO_FILE = -f ./docker-compose/minio.yaml
 ENV_FILE = --env-file ./.env
 
 build:
-	${DC} ${APP_FILE} build
+	${DC} ${AIFLOW_FILE} build
 up:
-	${DC} ${APP_FILE} ${ENV_FILE} up -d --build
+	${DC} ${AIFLOW_FILE} ${ENV_FILE} up -d --build
 	make logs
 up-a:
-	${DC} ${APP_FILE} ${ENV_FILE} up --build
+	${DC} ${AIFLOW_FILE} ${ENV_FILE} up --build
 logs:
-	${DC} ${APP_FILE} logs --follow
+	${DC} ${AIFLOW_FILE} logs --follow
 down:
-	${DC} ${APP_FILE} down
+	${DC} ${AIFLOW_FILE} down
 restart:
 	make down
 	make up
@@ -28,3 +29,6 @@ minio-logs:
 
 minio-down:
 	${DC} ${MINIO_FILE} down
+
+export-requirements:
+	poetry export -f requirements.txt --output requirements.txt --without-hashes

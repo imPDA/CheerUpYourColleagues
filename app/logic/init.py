@@ -1,6 +1,10 @@
 from functools import lru_cache
 
-import sqlalchemy
+from minio import Minio
+from punq import Container, Scope
+from sqlalchemy import create_engine
+from sqlalchemy.engine import Engine
+
 from infra.message_senders.base import BaseMessageSender
 from infra.message_senders.teams_webhook import TeamsWebhookMessageSender
 from infra.repositories.picture.base import BasePictureRepository
@@ -9,12 +13,13 @@ from infra.repositories.statistics.base import BaseStatisticsRepository
 from infra.repositories.statistics.rdb import RDBStatisticsRepository
 from infra.sources.picture.base import BasePictureSource
 from infra.sources.picture.lorem_picsum import LoremPicsumPictureSource
+from infra.sources.picture.wednesday import (
+    ImgurWednesdayPictureSource,
+    WednesdayPictureSource,
+)
 from infra.sources.quote.base import BaseQuoteSource
 from infra.sources.quote.quotable_io import QuotableIOQuoteSource
-from minio import Minio
-from punq import Container, Scope
 from settings.config import Config
-from sqlalchemy import create_engine
 
 
 @lru_cache(1)
@@ -28,6 +33,13 @@ def init_container() -> Container:
     # sources
     container.register(BasePictureSource, instance=LoremPicsumPictureSource())
     container.register(BaseQuoteSource, instance=QuotableIOQuoteSource())
+    container.register(
+        WednesdayPictureSource,
+        instance=ImgurWednesdayPictureSource(
+            client_id=config.imgur_client_id,
+            list_of_hashes=config.path_to_toad_links,
+        ),
+    )
 
     # senders
     container.register(
@@ -52,7 +64,7 @@ def init_container() -> Container:
     )
 
     container.register(
-        sqlalchemy.Engine,
+        Engine,
         factory=create_engine,
         scope=Scope.singleton,
         url=config.database_connection_string,

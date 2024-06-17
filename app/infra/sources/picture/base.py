@@ -5,8 +5,8 @@ from io import BytesIO
 
 @dataclass
 class Picture:
-    obj: BytesIO
-    public_link: str = ''
+    obj: BytesIO = None
+    public_link: str = None
 
 
 @dataclass

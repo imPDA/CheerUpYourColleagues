@@ -1,20 +1,18 @@
-from sqlalchemy import Integer, String
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import declarative_base
 
-
-class Base(DeclarativeBase):
-    pass
+Base = declarative_base()
 
 
 class QuoteRecord(Base):
     __tablename__ = 'quote_record'
 
-    index: Mapped[str] = mapped_column(String, primary_key=True)
-    quote: Mapped[str] = mapped_column(String)
-    author: Mapped[str] = mapped_column(String)
-    send_dt: Mapped[int] = mapped_column(Integer)
-    picture_url: Mapped[str] = mapped_column(String)
-    picture_name: Mapped[str] = mapped_column(String)
+    index = Column(String, primary_key=True)
+    quote = Column(String)
+    author = Column(String)
+    send_dt = Column(Integer)
+    picture_url = Column(String)
+    picture_name = Column(String)
 
     def __repr__(self) -> str:
         return (
