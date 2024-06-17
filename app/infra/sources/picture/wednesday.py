@@ -7,16 +7,16 @@ from typing import ClassVar
 
 import requests
 
-from infra.repositories.picture.base import BasePictureRepository, Picture
+from infra.sources.picture.base import BasePictureSource, Picture
 
 
 @dataclass
-class WednesdayPictureRepository(BasePictureRepository, ABC):
+class WednesdayPictureSource(BasePictureSource, ABC):
     pass
 
 
 @dataclass
-class ImgurWednesdayPictureRepository(WednesdayPictureRepository):
+class ImgurWednesdayPictureSource(WednesdayPictureSource):
     api_url: ClassVar[str] = 'https://api.imgur.com/3/image'
     client_id: str
     list_of_hashes: PathLike
