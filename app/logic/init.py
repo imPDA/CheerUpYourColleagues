@@ -1,5 +1,7 @@
 from functools import lru_cache
 
+import boto3
+from botocore.client import Config as AWSConfig
 from minio import Minio
 from punq import Container, Scope
 from sqlalchemy import create_engine
@@ -8,7 +10,7 @@ from sqlalchemy.engine import Engine
 from infra.message_senders.base import BaseMessageSender
 from infra.message_senders.teams_webhook import TeamsWebhookMessageSender
 from infra.repositories.picture.base import BasePictureRepository
-from infra.repositories.picture.minio import MinioPictureRepository
+from infra.repositories.picture.s3 import S3_Client, S3PictureRepository
 from infra.repositories.statistics.base import BaseStatisticsRepository
 from infra.repositories.statistics.rdb import RDBStatisticsRepository
 from infra.sources.picture.base import BasePictureSource
@@ -56,11 +58,21 @@ def init_container() -> Container:
             secure=False,
         ),
     )
+    s3_client = boto3.client(
+        's3',
+        endpoint_url=config.timeweb_s3_endpoint_url,
+        region_name=config.timeweb_s3_region_name,
+        aws_access_key_id=config.timeweb_s3_access_key,
+        aws_secret_access_key=config.timeweb_s3_secret_key,
+        config=AWSConfig(s3={'addressing_style': 'path'}),
+    )
+    container.register(S3_Client, instance=s3_client)
+
     container.register(
         BasePictureRepository,
-        factory=MinioPictureRepository,
+        factory=S3PictureRepository,
         scope=Scope.singleton,
-        bucket_name=config.minio_bucket_name,
+        bucket_name=config.timeweb_s3_pictures_bucket_name,
     )
 
     container.register(

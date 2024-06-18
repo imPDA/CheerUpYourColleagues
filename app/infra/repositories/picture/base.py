@@ -1,13 +1,15 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from io import BytesIO
+from typing import Optional
 from uuid import uuid4
 
 
 @dataclass
 class PictureObject:
-    obj: BytesIO
     ext: str
+
+    obj: Optional[BytesIO] = None
     uid: str = field(default_factory=lambda: str(uuid4()))
 
     @property
@@ -22,7 +24,7 @@ class PictureObject:
 @dataclass
 class BasePictureRepository(ABC):
     @abstractmethod
-    def create(self, filename: PictureObject) -> None:
+    def create(self, picture_object: PictureObject) -> None:
         raise NotImplementedError()
 
     @abstractmethod
