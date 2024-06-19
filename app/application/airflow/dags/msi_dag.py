@@ -1,7 +1,8 @@
 import pendulum
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
-from airflow.operators.python import PythonOperator
+from airflow.operators.python import PythonOperator, ShortCircuitOperator
+from airflow.utils.trigger_rule import TriggerRule
 
 from logic.save_content import save_image_to_s3, save_statistics
 from logic.send_random_message import (
@@ -30,6 +31,12 @@ def get_quote(ds) -> dict:
     )
 
 
+def do_run_today(ds: str) -> bool:
+    mm_dd = ds.split('-', 1)[1]
+
+    return mm_dd not in {'06-11', '06-13', '06-15', '06-25'}
+
+
 with DAG(
     dag_id='msi_project_dag',
     schedule=None,
@@ -42,6 +49,12 @@ with DAG(
     get_image_url_task = PythonOperator(
         task_id='get_image_url',
         python_callable=get_image_url,
+    )
+
+    skip_on_holidays = ShortCircuitOperator(
+        task_id='skip_on_holidays',
+        python_callable=do_run_today,
+        ignore_downstream_trigger_rules=False,
     )
 
     get_quote_task = PythonOperator(
@@ -76,10 +89,11 @@ with DAG(
         },
     )
 
-    end = EmptyOperator(task_id='end')
+    end = EmptyOperator(task_id='end', trigger_rule=TriggerRule.NONE_FAILED)
 
     (
         start
+        >> skip_on_holidays
         >> [get_image_url_task, get_quote_task]
         >> send_message_task
         >> save_image_to_s3_task
