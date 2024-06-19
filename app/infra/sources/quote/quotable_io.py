@@ -3,7 +3,7 @@ from typing import ClassVar
 
 import requests
 
-from .base import BaseQuoteRepository, Quote
+from .base import BaseQuoteSource, Quote
 
 
 def dict_to_quote_converter(raw: dict) -> Quote:
@@ -14,7 +14,7 @@ def dict_to_quote_converter(raw: dict) -> Quote:
 
 
 @dataclass
-class QuotableIOQuoteRepository(BaseQuoteRepository):
+class QuotableIOQuoteSource(BaseQuoteSource):
     base_endpoint: ClassVar[str] = 'https://api.quotable.io'
     quotes_endpoint: ClassVar[str] = base_endpoint + '/quotes'
     random_quotes_endpoint: ClassVar[str] = quotes_endpoint + '/random'
