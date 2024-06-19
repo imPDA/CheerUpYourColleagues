@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from sqlalchemy import Engine
+from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 
 from .base import BaseStatisticsRepository, QuoteObject
