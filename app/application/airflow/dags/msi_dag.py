@@ -33,7 +33,8 @@ def get_quote(ds) -> dict:
 
 def do_run_today(ds: str) -> bool:
     mm_dd = ds.split('-', 1)[1]
-    return mm_dd not in {'11-06', '13-06', '15-06', '25-06'}
+
+    return mm_dd not in {'06-11', '06-13', '06-15', '06-25'}
 
 
 with DAG(
@@ -54,11 +55,6 @@ with DAG(
         task_id='skip_on_holidays',
         python_callable=do_run_today,
         ignore_downstream_trigger_rules=False,
-    )
-
-    get_image_url = PythonOperator(
-        task_id='get_random_image_url',
-        python_callable=get_random_image_url,
     )
 
     get_quote_task = PythonOperator(
