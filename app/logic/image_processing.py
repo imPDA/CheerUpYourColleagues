@@ -1,10 +1,16 @@
 from io import BytesIO
+from typing import List, Tuple
 
+import requests
 from PIL import Image, ImageDraw, ImageFont
 from PIL.ImageFont import FreeTypeFont
 
-from infra.repositories.picture.base import Picture
-from infra.repositories.quote.base import Quote
+from infra.repositories.picture.base import BasePictureRepository, PictureObject
+from infra.repositories.picture.s3 import S3PictureRepository
+from infra.sources.picture.base import Picture
+from infra.sources.quote.base import Quote
+from logic.init import init_container
+from settings.config import Config
 
 WHITE_SEMITRANSPARENT = (255, 255, 255, 181)
 BLACK = (0, 0, 0)
@@ -21,7 +27,7 @@ def create_pil_image(picture: Picture) -> Image:
     return true_image
 
 
-def render_text(words: list[str], font: FreeTypeFont, max_width: int) -> Image:
+def render_text(words: List[str], font: FreeTypeFont, max_width: int) -> Image:
     x = (max_width - TEXT_PADDING) * 0.5
     y = TEXT_PADDING
 
@@ -55,13 +61,20 @@ def render_text(words: list[str], font: FreeTypeFont, max_width: int) -> Image:
 
 
 def create_quotation_container(
-    size: tuple[int, int],
+    size: Tuple[int, int],
     quotation_text: str,
     quotation_author: str,
-    quotation_text_font_path: str = 'arial.ttf',
-    quotation_author_font_path: str = 'ariali.ttf',
+    quotation_text_font_path: str = None,
+    quotation_author_font_path: str = None,
 ) -> Image:
-    print(quotation_text, quotation_author)
+    container = init_container()
+    config: Config = container.resolve(Config)
+
+    if quotation_text_font_path is None:
+        quotation_text_font_path = config.arial_font_path
+
+    if quotation_author_font_path is None:
+        quotation_author_font_path = config.ariali_font_path
 
     font_size = 32
     container_width, container_height = size
@@ -81,7 +94,6 @@ def create_quotation_container(
             text_image.height + author_image.height + MARGIN_BETWEEN_TEXTS
             < container_height
         ):
-            print(text_image.height, author_image.height, font_size)
             break
 
         font_size -= 1
@@ -100,6 +112,40 @@ def create_quotation_container(
     text_container.paste(author_image, (0, text_image.height))
 
     return text_container
+
+
+def combine_and_save_to_s3(
+    picture_url: str,
+    quotation_dict: dict,
+) -> dict:
+    response = requests.get(picture_url)
+    response.raise_for_status()
+
+    mime_type, mime_subtype = response.headers['content-type'].split('/')
+
+    if mime_type != 'image':
+        raise Exception(f'Wrong content: {type}')
+
+    picture = Picture(
+        obj=BytesIO(response.content),
+        public_link=picture_url,
+    )
+
+    quote = Quote(**quotation_dict)
+
+    combined = combine_image_and_quote(picture=picture, quote=quote)
+
+    container = init_container()
+    s3_repository: S3PictureRepository = container.resolve(BasePictureRepository)
+
+    picture_obj = PictureObject(
+        ext='jpeg',
+        obj=combined.obj,
+    )
+
+    s3_repository.create(picture_obj)
+
+    return {'url': s3_repository.url_for(picture_obj.name), 'name': picture_obj.name}
 
 
 def combine_image_and_quote(picture: Picture, quote: Quote) -> Picture:
@@ -131,18 +177,20 @@ def combine_image_and_quote(picture: Picture, quote: Quote) -> Picture:
     )
 
     buff = BytesIO()
-    return Picture(pil_image.save(buff, format='jpg'))
+    pil_image.save(buff, format='jpeg')
+
+    return Picture(obj=buff)
 
 
 if __name__ == '__main__':
-    from infra.repositories.picture.base import BasePictureRepository
-    from infra.repositories.quote.base import BaseQuoteRepository, Quote
+    from infra.sources.picture.base import BasePictureSource
+    from infra.sources.quote.base import BaseQuoteSource, Quote
     from logic.init import init_container
 
     container = init_container()
 
-    picture_repository = container.resolve(BasePictureRepository)
-    quotes_repository = container.resolve(BaseQuoteRepository)
+    picture_repository = container.resolve(BasePictureSource)
+    quotes_repository = container.resolve(BaseQuoteSource)
 
     picture = picture_repository.get_random()
     quote = quotes_repository.get_random()

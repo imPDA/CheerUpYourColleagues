@@ -27,7 +27,7 @@ class S3PictureRepository(BasePictureRepository):
     def create(self, picture_object: PictureObject) -> None:
         self.client.put_object(
             Bucket=self.bucket_name,
-            Body=picture_object.obj.read(),
+            Body=picture_object.obj.getvalue(),
             Key=picture_object.name,
         )
 
@@ -53,6 +53,20 @@ class S3PictureRepository(BasePictureRepository):
             Bucket=self.bucket_name,
             Key=filename,
         )
+
+    def url_for(self, filename: str) -> str:
+        try:
+            self.client.head_object(
+                Bucket=self.bucket_name,
+                Key=filename,
+            )
+        except ClientError as e:
+            if e.response['Error']['Code'] == '404':
+                raise Exception(f'File {filename} not found') from e
+            else:
+                raise
+
+        return f'{self.client._endpoint.host}/{self.bucket_name}/{filename}'
 
 
 if __name__ == '__main__':
