@@ -6,7 +6,7 @@ from dataclasses import dataclass
 @dataclass
 class Quote:
     text: str
-    author: str
+    author: str = ''
 
     def __str__(self):
         return f'"{self.text}" - {self.author}'

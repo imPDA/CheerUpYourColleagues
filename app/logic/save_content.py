@@ -31,9 +31,7 @@ def save_image_to_s3(*, image_url: str) -> str:
     return picture_obj.name
 
 
-def save_statistics(
-    *, ds: str, quotation_dict: dict, picture_link: str, picture_name: str
-) -> None:
+def save_statistics(*, ds: str, quotation_dict: dict, image_dict: dict) -> None:
     container = init_container()
     statistics_repository: BaseStatisticsRepository = container.resolve(
         BaseStatisticsRepository
@@ -42,7 +40,7 @@ def save_statistics(
         quote=quotation_dict['text'],
         author=quotation_dict.get('author', ''),
         send_dt=int(pendulum.from_format(ds, 'YYYY-MM-DD').timestamp()),
-        picture_url=picture_link,
-        picture_name=picture_name,
+        picture_url=image_dict['url'],
+        picture_name=image_dict['name'],
     )
     statistics_repository.create(quote_object)

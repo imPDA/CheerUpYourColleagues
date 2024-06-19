@@ -58,8 +58,19 @@ def get_random_quote() -> dict:
     return quote.to_dict()
 
 
-def send_image_and_quote_to_teams(quote: dict, image_url: str):
+def send_image_and_quote_to_teams(quote: dict, image_dict: dict):
+    image_url = image_dict['url']
+
     container = init_container()
 
     sender: BaseMessageSender = container.resolve(BaseMessageSender)
     sender.send(quote=quote['text'], author=quote['author'], image=image_url)
+
+
+def send_image_to_teams(image_dict: dict):
+    image_url = image_dict['url']
+
+    container = init_container()
+
+    sender: BaseMessageSender = container.resolve(BaseMessageSender)
+    sender.send(image=image_url)
