@@ -19,9 +19,7 @@ class Config(BaseSettings):
     minio_bucket_name: str = 'pictures'
     database_connection_string: str = Field(alias='database_connection_string')
     imgur_client_id: str = Field(alias='imgur_client_id')
-    path_to_toad_links: pathlib.Path = (
-        BASE_PATH / 'infra/repositories/picture/toad_memes.json'
-    )
+    path_to_toad_links: pathlib.Path = BASE_PATH / 'airflow/dags/toad_memes.json'
     timeweb_s3_endpoint_url: str
     timeweb_s3_region_name: str
     timeweb_s3_access_key: str

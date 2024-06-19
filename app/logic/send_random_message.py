@@ -69,4 +69,4 @@ def send_image_and_quote_to_teams(quote: dict, image_url: str):
     container = init_container()
 
     sender: BaseMessageSender = container.resolve(BaseMessageSender)
-    sender.send(quote=quote['text'], author=quote['author'], image=image_url)
+    sender.send(quote=quote['text'], author=quote.get('author'), image=image_url)

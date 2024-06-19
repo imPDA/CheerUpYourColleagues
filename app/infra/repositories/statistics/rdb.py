@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List
 
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
@@ -32,7 +33,7 @@ class RDBStatisticsRepository(BaseStatisticsRepository):
 
         return postgres_record_to_quote_object_converter(quote_record)
 
-    def find(self, *filters) -> list[QuoteObject]:
+    def find(self, *filters) -> List[QuoteObject]:
         with Session(self.engine) as session:
             return list(
                 map(
