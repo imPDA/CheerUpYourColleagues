@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List
 
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
@@ -31,6 +32,15 @@ class RDBStatisticsRepository(BaseStatisticsRepository):
             raise Exception(f'No quote record with index {index} found!')
 
         return postgres_record_to_quote_object_converter(quote_record)
+
+    def find(self, *filters) -> List[QuoteObject]:
+        with Session(self.engine) as session:
+            return list(
+                map(
+                    postgres_record_to_quote_object_converter,
+                    session.query(QuoteRecord).filter(*filters).all(),
+                )
+            )
 
     def delete(self, index: str) -> None:
         with Session(self.engine) as session:

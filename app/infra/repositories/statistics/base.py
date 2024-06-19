@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+from typing import List
 from uuid import uuid4
 
 
@@ -21,6 +22,10 @@ class BaseStatisticsRepository(ABC):
 
     @abstractmethod
     def read(self, index: str) -> QuoteObject:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def find(self, *filters) -> List[QuoteObject]:
         raise NotImplementedError()
 
     @abstractmethod

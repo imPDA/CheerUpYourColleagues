@@ -4,6 +4,7 @@ from datetime import datetime
 from infra.message_senders.base import BaseMessageSender
 from infra.repositories.picture.base import BasePictureRepository, PictureObject
 from infra.repositories.statistics.base import BaseStatisticsRepository, QuoteObject
+from infra.repositories.statistics.rdb_tables import QuoteRecord
 from infra.sources.picture.base import BasePictureSource
 from infra.sources.quote.base import BaseQuoteSource
 from logic.init import init_container
@@ -20,16 +21,22 @@ def send_random_image_and_text():
     picture = picture_source.get_random()
     quote = quotes_source.get_random()
 
-    sender = container.resolve(BaseMessageSender)
-    sender.send(quote=quote.text, author=quote.author, image=picture.public_link)
-
-    picture_repository: BasePictureRepository = container.resolve(BasePictureRepository)
-    picture_object = PictureObject(obj=picture.obj, ext='jpg')
-    picture_repository.create(picture_object)
-
     statistics_repository: BaseStatisticsRepository = container.resolve(
         BaseStatisticsRepository
     )
+    quote_was_already_sent = bool(
+        statistics_repository.find(QuoteRecord.quote == quote.text)
+    )
+    if quote_was_already_sent:
+        raise Exception('This quote was already sent before!')
+
+    sender: BaseMessageSender = container.resolve(BaseMessageSender)
+    sender.send(quote=quote.text, author=quote.author, image=picture.public_link)
+
+    picture_repository: BasePictureRepository = container.resolve(BasePictureRepository)
+    picture_object = PictureObject(obj=picture.obj, ext='jpeg')
+    picture_repository.create(picture_object)
+
     quote_object = QuoteObject(
         quote=quote.text,
         author=quote.author,
@@ -62,4 +69,4 @@ def send_image_and_quote_to_teams(quote: dict, image_url: str):
     container = init_container()
 
     sender: BaseMessageSender = container.resolve(BaseMessageSender)
-    sender.send(quote=quote['text'], author=quote['author'], image=image_url)
+    sender.send(quote=quote['text'], author=quote.get('author'), image=image_url)

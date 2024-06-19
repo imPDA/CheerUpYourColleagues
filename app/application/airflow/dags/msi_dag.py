@@ -1,9 +1,16 @@
+from datetime import timedelta
+
 import pendulum
 from airflow import DAG
+from airflow.exceptions import AirflowException
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
 
-from logic.save_content import save_image_to_s3, save_statistics
+from logic.save_content import (
+    check_quotation_exists_in_db,
+    save_image_to_s3,
+    save_statistics,
+)
 from logic.send_random_message import (
     get_random_image_url,
     get_random_quote,
@@ -30,6 +37,15 @@ def get_quote(ds) -> dict:
     )
 
 
+def check_quotation_seen(context, result=None):
+    date = pendulum.from_format(context['ds'], 'YYYY-MM-DD').date()
+    if wednesday(date):
+        return
+
+    if check_quotation_exists_in_db(result['text']):
+        raise AirflowException('Quotation was already seen before')
+
+
 with DAG(
     dag_id='msi_project_dag',
     schedule=None,
@@ -47,6 +63,9 @@ with DAG(
     get_quote_task = PythonOperator(
         task_id='get_quote',
         python_callable=get_quote,
+        post_execute=check_quotation_seen,
+        retries=5,
+        retry_delay=timedelta(seconds=1),
     )
 
     send_message_task = PythonOperator(

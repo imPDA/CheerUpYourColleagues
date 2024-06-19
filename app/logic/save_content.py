@@ -5,6 +5,7 @@ import requests
 
 from infra.repositories.picture.base import BasePictureRepository, PictureObject
 from infra.repositories.statistics.base import BaseStatisticsRepository, QuoteObject
+from infra.repositories.statistics.rdb_tables import QuoteRecord
 from logic.init import init_container
 
 
@@ -46,3 +47,12 @@ def save_statistics(
         picture_name=picture_name,
     )
     statistics_repository.create(quote_object)
+
+
+def check_quotation_exists_in_db(quotation_text: str) -> bool:
+    container = init_container()
+    statistics_repository: BaseStatisticsRepository = container.resolve(
+        BaseStatisticsRepository
+    )
+
+    return bool(statistics_repository.find(QuoteRecord.quote == quotation_text))
