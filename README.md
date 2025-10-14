@@ -1,7 +1,5 @@
 ## Cheer Up Your Colleagues
 
-### Simple application to send encouraging messages to a work chat!
+This is an educational programming project for the Quantori DE School. The objective was to create an application that retrieves an image and a quote, combines them, and sends the result to a Microsoft Teams chat. The entire application is orchestrated by Apache Airflow. Images and quotes are stored in an S3-compatible storage system (e.g., MinIO) and an RDS (AWS) database, respectively, after being sent to the chat.
 
-![picture](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7Elmz1AYPfS4I0AfOFq_Je72GBMsDHSj4aw&s)
-
-### See dev branch 👀
+The entire application is containerized using Docker. Git is used for version control, with a new feature branch (following the naming convention MSI-...) created for each development sprint. Development is conducted on the dev branch.
